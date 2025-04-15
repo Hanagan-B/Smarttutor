@@ -18,6 +18,7 @@ public class SmartTutorServer {
         Server server;
         server = ServerBuilder.forPort(50051)  
                 .addService(new DoubtsServiceImpl())
+                .addService(new ReviewContentServiceImpl())
                 .build();
 
         System.out.println("Server started, listening on port 50051...");
