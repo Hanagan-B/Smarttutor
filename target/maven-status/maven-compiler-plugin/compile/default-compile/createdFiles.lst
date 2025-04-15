@@ -5,6 +5,7 @@ generated\grpc\smarttutor\QuizAnswers$1.class
 generated\grpc\smarttutor\ReviewContentServiceGrpc$ReviewContentServiceImplBase.class
 generated\grpc\smarttutor\DoubtsServiceGrpc$DoubtsServiceStub.class
 generated\grpc\smarttutor\EssayGradedOrBuilder.class
+distsys\smarttutor\DoubtsServiceImpl.class
 generated\grpc\smarttutor\GradeEssayServiceGrpc$3.class
 generated\grpc\smarttutor\ReviewContentServiceGrpc.class
 generated\grpc\smarttutor\StudentQuizServiceGrpc$AsyncService.class
@@ -12,8 +13,8 @@ generated\grpc\smarttutor\GradeEssayServiceGrpc$GradeEssayServiceImplBase.class
 generated\grpc\smarttutor\QuizQuestions$Builder.class
 generated\grpc\smarttutor\DoubtsServiceGrpc$3.class
 generated\grpc\smarttutor\RequestContentOrBuilder.class
+distsys\smarttutor\SmartTutorClient.class
 generated\grpc\smarttutor\ContentReply$1.class
-distsys\smarttutor\Smarttutor.class
 generated\grpc\smarttutor\StudentQuizServiceGrpc$1.class
 generated\grpc\smarttutor\RequestQuestionOrBuilder.class
 generated\grpc\smarttutor\ReviewContentServiceGrpc$ReviewContentServiceBlockingStub.class
@@ -55,6 +56,7 @@ generated\grpc\smarttutor\GradeEssayServiceGrpc$MethodHandlers.class
 generated\grpc\smarttutor\DoubtsServiceGrpc$DoubtsServiceBlockingStub.class
 generated\grpc\smarttutor\SmartAnswerOrBuilder.class
 generated\grpc\smarttutor\Smarttutor.class
+distsys\smarttutor\SmartTutorServer.class
 generated\grpc\smarttutor\ReviewContentServiceGrpc$AsyncService.class
 generated\grpc\smarttutor\Essay$1.class
 generated\grpc\smarttutor\GradeEssayServiceGrpc$2.class

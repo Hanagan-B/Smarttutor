@@ -1,4 +1,6 @@
-D:\Documents\NetBeansProjects\Smarttutor\src\main\java\distsys\smarttutor\Smarttutor.java
+D:\Documents\NetBeansProjects\Smarttutor\src\main\java\distsys\smarttutor\DoubtsServiceImpl.java
+D:\Documents\NetBeansProjects\Smarttutor\src\main\java\distsys\smarttutor\SmartTutorClient.java
+D:\Documents\NetBeansProjects\Smarttutor\src\main\java\distsys\smarttutor\SmartTutorServer.java
 D:\Documents\NetBeansProjects\Smarttutor\target\generated-sources\protobuf\grpc-java\generated\grpc\smarttutor\DoubtsServiceGrpc.java
 D:\Documents\NetBeansProjects\Smarttutor\target\generated-sources\protobuf\grpc-java\generated\grpc\smarttutor\GradeEssayServiceGrpc.java
 D:\Documents\NetBeansProjects\Smarttutor\target\generated-sources\protobuf\grpc-java\generated\grpc\smarttutor\ReviewContentServiceGrpc.java
