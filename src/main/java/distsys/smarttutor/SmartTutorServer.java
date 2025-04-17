@@ -4,6 +4,10 @@
  */
 package distsys.smarttutor;
 
+import distsys.smarttutor.Server.DoubtsServiceImpl;
+import distsys.smarttutor.Server.GradeEssayServiceImpl;
+import distsys.smarttutor.Server.StudentQuizServiceImpl;
+import distsys.smarttutor.Server.ReviewContentServiceImpl;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import java.io.IOException;

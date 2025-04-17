@@ -4,6 +4,7 @@
  */
 package distsys.smarttutor;
 
+import distsys.smarttutor.gui.SmartTutorFaceFrame;
 import generated.grpc.smarttutor.ContentReply;
 import generated.grpc.smarttutor.DoubtsServiceGrpc;
 import generated.grpc.smarttutor.Essay;
@@ -30,6 +31,7 @@ import java.util.concurrent.CountDownLatch;
 public class SmartTutorClient {
 
     public static void main(String[] args) throws InterruptedException {
+        new SmartTutorFaceFrame().setVisible(true);
         //Connect to the server
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50051)
                 .usePlaintext()

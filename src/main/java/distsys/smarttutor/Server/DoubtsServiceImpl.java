@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package distsys.smarttutor;
+package distsys.smarttutor.Server;
 
 import generated.grpc.smarttutor.DoubtsServiceGrpc;
 import generated.grpc.smarttutor.RequestQuestion;
