@@ -48,12 +48,15 @@ public class GradeEssayServiceImpl extends GradeEssayServiceGrpc.GradeEssayServi
 
             //change to create a good feedback
             private String generateFeedback(String essayText) {
-                if (essayText.length() < 100) {
-                    return "Consider expanding your conclusion.";
+                if (essayText.length() > 100) {
+                    return "Well-written essay. Watch out for grammar issues.";
                 } else if (essayText.length() < 50) {
                     return "The essay is too short. Please provide more content.";
-                } else {
-                    return "Well-written essay. Watch out for grammar issues.";
+                } else if (essayText.length() > 150) {
+                    return "Good Syntax usage. To improve just check to use the correct style.";
+                }
+                else {
+                    return "Please, watch your ponctuation.";
                 }
             }
 

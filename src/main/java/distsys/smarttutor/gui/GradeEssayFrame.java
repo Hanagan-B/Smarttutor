@@ -4,17 +4,34 @@
  */
 package distsys.smarttutor.gui;
 
+import generated.grpc.smarttutor.GradeEssayServiceGrpc;
+import generated.grpc.smarttutor.GradeEssayServiceGrpc.GradeEssayServiceStub;
+import generated.grpc.smarttutor.Essay;
+import generated.grpc.smarttutor.EssayGraded;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
+
 /**
  *
  * @author bruol
  */
 public class GradeEssayFrame extends javax.swing.JFrame {
 
+    private ManagedChannel channel;
+    private GradeEssayServiceStub stub;
+
     /**
      * Creates new form GradeEssayFrame
      */
     public GradeEssayFrame() {
         initComponents();
+
+        channel = ManagedChannelBuilder.forAddress("localhost", 50051)
+                .usePlaintext()
+                .build();
+        stub = GradeEssayServiceGrpc.newStub(channel);
+        
+        essaySend.addActionListener((ActionEvent evt) -> sendEssayToServer());
     }
 
     /**
@@ -28,11 +45,12 @@ public class GradeEssayFrame extends javax.swing.JFrame {
 
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        essaySend = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
-        jButton2 = new javax.swing.JButton();
+        essayFeedback = new javax.swing.JTextField();
+        ExitEssay = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        essayToStream = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Essay");
@@ -43,12 +61,26 @@ public class GradeEssayFrame extends javax.swing.JFrame {
 
         jLabel2.setText("Please submit your essay bellow:");
 
-        jButton1.setText("Send");
-        jButton1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        essaySend.setText("Send");
+        essaySend.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        essaySend.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                essaySendActionPerformed(evt);
+            }
+        });
 
         jLabel3.setText("Here are a few things about your essay:");
 
-        jButton2.setText("Exit");
+        ExitEssay.setText("Exit");
+        ExitEssay.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ExitEssayActionPerformed(evt);
+            }
+        });
+
+        essayToStream.setColumns(20);
+        essayToStream.setRows(5);
+        jScrollPane1.setViewportView(essayToStream);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -56,20 +88,19 @@ public class GradeEssayFrame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(jButton1)
-                        .addGroup(layout.createSequentialGroup()
-                            .addGap(66, 66, 66)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(jButton2)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addComponent(jLabel3)
-                                        .addComponent(jLabel2))
-                                    .addGap(32, 32, 32)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(jTextField1)
-                                        .addComponent(jTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE))))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(66, 66, 66)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(essaySend)
+                            .addComponent(ExitEssay)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabel3)
+                                    .addComponent(jLabel2))
+                                .addGap(32, 32, 32)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(essayFeedback, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
+                                    .addComponent(jScrollPane1)))))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(271, 271, 271)
                         .addComponent(jLabel1)))
@@ -83,20 +114,64 @@ public class GradeEssayFrame extends javax.swing.JFrame {
                 .addGap(33, 33, 33)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton1)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(jButton2)
-                .addContainerGap(52, Short.MAX_VALUE))
+                .addComponent(essaySend)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(46, 46, 46)
+                        .addComponent(jLabel3))
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(essayFeedback, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(ExitEssay)
+                .addContainerGap(64, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void ExitEssayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExitEssayActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_ExitEssayActionPerformed
+
+    private void essaySendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_essaySendActionPerformed
+        String essayText = essayToStream.getText();
+        String[] lines = essayText.split("\\r?\\n");
+
+        GradeEssayServiceGrpc.GradeEssayServiceStub asyncStub = GradeEssayServiceGrpc.newStub(channel);
+
+        io.grpc.stub.StreamObserver<generated.grpc.smarttutor.EssayGraded> responseObserver
+                = new io.grpc.stub.StreamObserver<generated.grpc.smarttutor.EssayGraded>() {
+            @Override
+            public void onNext(generated.grpc.smarttutor.EssayGraded value) {
+                essayFeedback.setText(value.getFeedback());
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                essayFeedback.setText("Error: " + t.getMessage());
+            }
+
+            @Override
+            public void onCompleted() {
+                // Nothing to do here
+            }
+        };
+
+        io.grpc.stub.StreamObserver<generated.grpc.smarttutor.Essay> requestObserver
+                = asyncStub.studentEssay(responseObserver);
+
+        for (String line : lines) {
+            generated.grpc.smarttutor.Essay essayPart = generated.grpc.smarttutor.Essay.newBuilder()
+                    .setContent(line)
+                    .build();
+            requestObserver.onNext(essayPart);
+        }
+
+        requestObserver.onCompleted();
+    }//GEN-LAST:event_essaySendActionPerformed
 
     /**
      * @param args the command line arguments
@@ -134,12 +209,13 @@ public class GradeEssayFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton ExitEssay;
+    private javax.swing.JTextField essayFeedback;
+    private javax.swing.JButton essaySend;
+    private javax.swing.JTextArea essayToStream;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
+    private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }
