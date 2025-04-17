@@ -10,27 +10,27 @@ import generated.grpc.smarttutor.GradeEssayServiceGrpc;
 import io.grpc.stub.StreamObserver;
 
 /**
+ * This class implement the Grade Essay Service
  *
  * @author bruol
  */
 public class GradeEssayServiceImpl extends GradeEssayServiceGrpc.GradeEssayServiceImplBase {
+
     @Override
     public StreamObserver<Essay> studentEssay(StreamObserver<EssayGraded> responseObserver) {
-        
 
         return new StreamObserver<Essay>() {
             StringBuilder fullEssay = new StringBuilder();
-            
-            
+
             @Override
             public void onNext(Essay essayPart) {
-                fullEssay.append(essayPart.getPartEssay()).append(" ");
-                System.out.println("Received essay part: " + essayPart.getPartEssay());
+                fullEssay.append(essayPart.getPartEssay());
+                
             }
 
             @Override
             public void onError(Throwable t) {
-                t.printStackTrace();
+                System.err.println("Error during essay grading: " + t.getMessage());
             }
 
             @Override
@@ -45,17 +45,18 @@ public class GradeEssayServiceImpl extends GradeEssayServiceGrpc.GradeEssayServi
                 responseObserver.onNext(graded);
                 responseObserver.onCompleted();
             }
+
             //change to create a good feedback
             private String generateFeedback(String essayText) {
-                if (essayText.toLowerCase().contains("text")) {
-                    return " Consider expanding your conclusion.";
+                if (essayText.length() < 100) {
+                    return "Consider expanding your conclusion.";
                 } else if (essayText.length() < 50) {
                     return "The essay is too short. Please provide more content.";
                 } else {
                     return "Well-written essay. Watch out for grammar issues.";
                 }
             }
-            
+
         };
     }
 }

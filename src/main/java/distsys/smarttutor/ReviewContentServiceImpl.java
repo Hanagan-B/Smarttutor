@@ -12,30 +12,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * This class implement the Review Content Service
  *
  * @author bruol
  */
 public class ReviewContentServiceImpl extends ReviewContentServiceGrpc.ReviewContentServiceImplBase {
-    
+
     @Override
-    public void reviewContent (RequestContent request, StreamObserver<ContentReply> responseObserver){
+    public void reviewContent(RequestContent request, StreamObserver<ContentReply> responseObserver) {
         String contentToReview = request.getContent();
-        
-        //just to simulat, i need to create actuial content
+
+        //just to simulat, i need to create actual content
         List<String> contentReplies = getContentReplies(contentToReview);
-        
+
         //For loop will allow the multiple responses
         for (String reply : contentReplies) {
             ContentReply contentReply = ContentReply.newBuilder()
-                                                    .setReply(reply)
-                                                    .build();
-            responseObserver.onNext(contentReply); 
+                    .setReply(reply)
+                    .build();
+            responseObserver.onNext(contentReply);
         }
-            responseObserver.onCompleted();
+        responseObserver.onCompleted();
     }
-        
-        //create all the replies
-        private List<String> getContentReplies(String content) {
+
+    //create all the replies
+    private List<String> getContentReplies(String content) {
         List<String> replies;
         replies = new ArrayList<>();
         if (content.equalsIgnoreCase("math")) {
@@ -50,7 +51,6 @@ public class ReviewContentServiceImpl extends ReviewContentServiceGrpc.ReviewCon
             replies.add("Content not found. Please try again.");
         }
         return replies;
-        
-    
+
     }
 }

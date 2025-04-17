@@ -2,7 +2,9 @@ D:\Documents\NetBeansProjects\Smarttutor\src\main\java\distsys\smarttutor\Doubts
 D:\Documents\NetBeansProjects\Smarttutor\src\main\java\distsys\smarttutor\GradeEssayServiceImpl.java
 D:\Documents\NetBeansProjects\Smarttutor\src\main\java\distsys\smarttutor\ReviewContentServiceImpl.java
 D:\Documents\NetBeansProjects\Smarttutor\src\main\java\distsys\smarttutor\SmartTutorClient.java
+D:\Documents\NetBeansProjects\Smarttutor\src\main\java\distsys\smarttutor\SmartTutorFrame.java
 D:\Documents\NetBeansProjects\Smarttutor\src\main\java\distsys\smarttutor\SmartTutorServer.java
+D:\Documents\NetBeansProjects\Smarttutor\src\main\java\distsys\smarttutor\StudentQuizServiceImpl.java
 D:\Documents\NetBeansProjects\Smarttutor\target\generated-sources\protobuf\grpc-java\generated\grpc\smarttutor\DoubtsServiceGrpc.java
 D:\Documents\NetBeansProjects\Smarttutor\target\generated-sources\protobuf\grpc-java\generated\grpc\smarttutor\GradeEssayServiceGrpc.java
 D:\Documents\NetBeansProjects\Smarttutor\target\generated-sources\protobuf\grpc-java\generated\grpc\smarttutor\ReviewContentServiceGrpc.java

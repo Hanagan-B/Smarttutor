@@ -95,9 +95,6 @@ public final class StudentQuizServiceGrpc {
   public interface AsyncService {
 
     /**
-     * <pre>
-     *for stream of questions and responses
-     * </pre>
      */
     default io.grpc.stub.StreamObserver<generated.grpc.smarttutor.QuizQuestions> smartQuiz(
         io.grpc.stub.StreamObserver<generated.grpc.smarttutor.QuizAnswers> responseObserver) {
@@ -133,9 +130,6 @@ public final class StudentQuizServiceGrpc {
     }
 
     /**
-     * <pre>
-     *for stream of questions and responses
-     * </pre>
      */
     public io.grpc.stub.StreamObserver<generated.grpc.smarttutor.QuizQuestions> smartQuiz(
         io.grpc.stub.StreamObserver<generated.grpc.smarttutor.QuizAnswers> responseObserver) {

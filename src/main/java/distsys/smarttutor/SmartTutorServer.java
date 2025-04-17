@@ -20,6 +20,7 @@ public class SmartTutorServer {
                 .addService(new DoubtsServiceImpl())
                 .addService(new ReviewContentServiceImpl())
                 .addService(new GradeEssayServiceImpl())
+                .addService(new StudentQuizServiceImpl())
                 .build();
 
         System.out.println("Server started, listening on port 50051...");

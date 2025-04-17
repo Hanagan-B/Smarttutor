@@ -66,7 +66,10 @@ service StudentQuizService {
 
   
   //for stream of questions and responses
+  
   rpc SmartQuiz(stream QuizQuestions) returns (stream QuizAnswers);
+
+  
 }
 // message identifying the questions of thew quiz
    message QuizQuestions {
@@ -74,7 +77,7 @@ service StudentQuizService {
    }
 
    // The response to the question
-   message QuizAnswers {
-     string answer = 1;
-bool answerCorrect = 2;
+    message QuizAnswers {
+    string answer = 1;
+    bool answerCorrect = 2;
    }
