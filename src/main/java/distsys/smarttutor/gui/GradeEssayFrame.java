@@ -164,11 +164,11 @@ public class GradeEssayFrame extends javax.swing.JFrame {
     JOptionPane.showMessageDialog(null, "Essay submitted and graded.");
     }
     };
-    
+    //spliting the essay in parts
     StreamObserver<Essay> requestObserver = stub.studentEssay(responseObserver);
     String[] paragraphs = fullText.split("\n\n");
     for (String para : paragraphs) {
-    if (!para.trim().isEmpty()) {
+    if (!para.trim().isEmpty()) {//avoiding empty strings
     Essay essay = Essay.newBuilder().setPartEssay(para.trim()).build();
     requestObserver.onNext(essay);
     }

@@ -17,12 +17,7 @@ import java.util.List;
  * @author bruol
  */
 public class StudentQuizServiceImpl extends StudentQuizServiceGrpc.StudentQuizServiceImplBase {
-
-    @Override
-    public StreamObserver<QuizQuestions> smartQuiz(StreamObserver<QuizAnswers> responseObserver) {
-        return new StreamObserver<QuizQuestions>() {
-            int questionIndex = 0;
-            //I have created a general simple range of questions
+        //I have created a general simple range of questions
             List<String> questions = Arrays.asList(
                     "What is the capital of Ireland?",
                     "What is 4 + 2?",
@@ -41,36 +36,58 @@ public class StudentQuizServiceImpl extends StudentQuizServiceGrpc.StudentQuizSe
                     "24 hours",
                     "bamboo"
             );
+            
+    @Override
+    public StreamObserver<QuizQuestions> smartQuiz(StreamObserver<QuizAnswers> responseObserver) {
+        return new StreamObserver<QuizQuestions>() {
+            
+            private int questionIndex = 0;
+            private boolean firstQuestionSent = false;
+            private boolean waitingForAnswer = false;
 
             @Override
             public void onNext(QuizQuestions inputAnswer) {
                 String userResponse = inputAnswer.getQuestion();
+                
+                if (!firstQuestionSent) {
+                
+                if (!questions.isEmpty()) {
+                    String firstQuestion = questions.get(questionIndex);
+                    responseObserver.onNext(QuizAnswers.newBuilder()
+                            .setAnswer(firstQuestion)
+                            .build());
+                    firstQuestionSent = true;
+                    waitingForAnswer = true;
+                } else {
+                    responseObserver.onCompleted();
+                }
+            } else if (waitingForAnswer){
+                
                 String correctAnswer = correctAnswers.get(questionIndex);
-                
                 boolean isCorrect = userResponse.equalsIgnoreCase(correctAnswer);
-                
+
                 responseObserver.onNext(QuizAnswers.newBuilder()
                         .setAnswer("Correct answer: " + correctAnswer)
                         .setAnswerCorrect(isCorrect)
                         .build());
-                //this if statement you allow the stream to continue as long as it has another question
-                if (questionIndex++ < questions.size() - 1) {
+                waitingForAnswer = false;
+                
+                
+                // Move to the next question
+                if (questionIndex < questions.size() - 1) {
+                    questionIndex++;
                     String nextQuestion = questions.get(questionIndex);
                     responseObserver.onNext(QuizAnswers.newBuilder()
                             .setAnswer(nextQuestion)
-                            .setAnswerCorrect(false)  
                             .build());
                 } else {
-                    responseObserver.onCompleted();  
+                    responseObserver.onCompleted();
                 }
             }
+        }
             
                 @Override
-                public void onError
-                (Throwable t
-                
-                
-                    ) {
+                public void onError(Throwable t) {
                 System.err.println("Error during quiz: " + t.getMessage());
                 }
 

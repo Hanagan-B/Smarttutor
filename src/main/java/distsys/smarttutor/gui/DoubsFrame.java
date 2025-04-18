@@ -150,7 +150,7 @@ public class DoubsFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_exitQuestionActionPerformed
 
     private void sendQuestionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendQuestionActionPerformed
-        if(studentQuestion.getText().isEmpty()){
+        if(studentQuestion.getText().isEmpty()){//check if the user is pressing send on a empty field
            JOptionPane.showMessageDialog(null, "Please enter your question");
         } else{
             String question = studentQuestion.getText().trim();

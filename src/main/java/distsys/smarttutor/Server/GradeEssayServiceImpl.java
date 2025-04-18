@@ -21,7 +21,7 @@ public class GradeEssayServiceImpl extends GradeEssayServiceGrpc.GradeEssayServi
 
         return new StreamObserver<Essay>() {
             StringBuilder fullEssay = new StringBuilder();
-
+            //appending parts
             @Override
             public void onNext(Essay essayPart) {
                 fullEssay.append(essayPart.getPartEssay());
@@ -32,7 +32,7 @@ public class GradeEssayServiceImpl extends GradeEssayServiceGrpc.GradeEssayServi
             public void onError(Throwable t) {
                 System.err.println("Error during essay grading: " + t.getMessage());
             }
-
+            //generating feedback
             @Override
             public void onCompleted() {
                 String essayText = fullEssay.toString().trim();
@@ -46,7 +46,7 @@ public class GradeEssayServiceImpl extends GradeEssayServiceGrpc.GradeEssayServi
                 responseObserver.onCompleted();
             }
 
-            //change to create a good feedback
+            //range of feedback, can be improved to consider more relevant aspects
             private String generateFeedback(String essayText) {
                 if (essayText.length() > 100) {
                     return "Well-written essay. Watch out for grammar issues.";
