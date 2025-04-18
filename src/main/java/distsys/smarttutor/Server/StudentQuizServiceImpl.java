@@ -42,53 +42,48 @@ public class StudentQuizServiceImpl extends StudentQuizServiceGrpc.StudentQuizSe
                     "bamboo"
             );
 
-            boolean firstQuestionSent = false;
-            
-            StreamObserver<QuizQuestions> requestObserver; // To hold the incoming request observer
-
-       
             @Override
             public void onNext(QuizQuestions inputAnswer) {
-                if (!firstQuestionSent) {
-                }
-
-                if (questionIndex < questions.size()) {
-                    String userResponse = inputAnswer.getQuestion();
-                    String correctAnswer = correctAnswers.get(questionIndex);
-
-                    boolean isCorrect = userResponse.equalsIgnoreCase(correctAnswer);
-
+                String userResponse = inputAnswer.getQuestion();
+                String correctAnswer = correctAnswers.get(questionIndex);
+                
+                boolean isCorrect = userResponse.equalsIgnoreCase(correctAnswer);
+                
+                responseObserver.onNext(QuizAnswers.newBuilder()
+                        .setAnswer("Correct answer: " + correctAnswer)
+                        .setAnswerCorrect(isCorrect)
+                        .build());
+                //this if statement you allow the stream to continue as long as it has another question
+                if (questionIndex++ < questions.size() - 1) {
+                    String nextQuestion = questions.get(questionIndex);
                     responseObserver.onNext(QuizAnswers.newBuilder()
-                            .setAnswer("Correct answer: " + correctAnswer)
-                            .setAnswerCorrect(isCorrect)
+                            .setAnswer(nextQuestion)
+                            .setAnswerCorrect(false)  
                             .build());
-                    
-                    if (++questionIndex < questions.size()) {
-                        String nextQuestion = questions.get(questionIndex);
-                        responseObserver.onNext(QuizAnswers.newBuilder()
-                                .setAnswer(nextQuestion)
-                                .setAnswerCorrect(false)
-                                .build());
                 } else {
-                    responseObserver.onCompleted();
-                    }
+                    responseObserver.onCompleted();  
                 }
             }
-
-            @Override
-            public void onError(Throwable t) {
+            
+                @Override
+                public void onError
+                (Throwable t
+                
+                
+                    ) {
                 System.err.println("Error during quiz: " + t.getMessage());
-            }
+                }
 
-            @Override
-            public void onCompleted() {
+                @Override
+                public void onCompleted
+                
+                
+                    () {
                 System.out.println("Quiz session completed.");
-                responseObserver.onCompleted();
+                    responseObserver.onCompleted();
+                }
+
             }
-            
-
-            
-
-        };
+        ;
     }
 }

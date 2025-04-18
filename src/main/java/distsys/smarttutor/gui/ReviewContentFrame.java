@@ -11,6 +11,7 @@ import generated.grpc.smarttutor.RequestContent;
 import generated.grpc.smarttutor.ContentReply;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import javax.swing.JOptionPane;
 
 
 /**
@@ -184,7 +185,7 @@ public class ReviewContentFrame extends javax.swing.JFrame {
 
         @Override
         public void onError(Throwable t) {
-            reviewResults.setText("Error: " + t.getMessage());
+            JOptionPane.showMessageDialog(null, "Error: " + t.getMessage());
         }
 
         @Override

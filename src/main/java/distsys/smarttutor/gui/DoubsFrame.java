@@ -164,7 +164,7 @@ public class DoubsFrame extends javax.swing.JFrame {
                 
                 answerField.setText(response.getAnswer());
             } catch (Exception ex) {
-                answerField.setText("Erro ao enviar a pergunta: " + ex.getMessage());
+                JOptionPane.showMessageDialog(null, "Erro ao enviar a pergunta: " + ex.getMessage());
             }
         }
     }//GEN-LAST:event_sendQuestionActionPerformed

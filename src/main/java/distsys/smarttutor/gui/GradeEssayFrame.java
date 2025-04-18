@@ -10,6 +10,9 @@ import generated.grpc.smarttutor.Essay;
 import generated.grpc.smarttutor.EssayGraded;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.stub.StreamObserver;
+import java.awt.event.ActionEvent;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -117,14 +120,11 @@ public class GradeEssayFrame extends javax.swing.JFrame {
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(essaySend)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(46, 46, 46)
-                        .addComponent(jLabel3))
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(essayFeedback, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(34, 34, 34)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(essayFeedback, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(21, 21, 21)
                 .addComponent(ExitEssay)
                 .addContainerGap(64, Short.MAX_VALUE))
         );
@@ -137,42 +137,44 @@ public class GradeEssayFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_ExitEssayActionPerformed
 
     private void essaySendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_essaySendActionPerformed
-        String essayText = essayToStream.getText();
-        String[] lines = essayText.split("\\r?\\n");
-
-        GradeEssayServiceGrpc.GradeEssayServiceStub asyncStub = GradeEssayServiceGrpc.newStub(channel);
-
-        io.grpc.stub.StreamObserver<generated.grpc.smarttutor.EssayGraded> responseObserver
-                = new io.grpc.stub.StreamObserver<generated.grpc.smarttutor.EssayGraded>() {
-            @Override
-            public void onNext(generated.grpc.smarttutor.EssayGraded value) {
-                essayFeedback.setText(value.getFeedback());
-            }
-
-            @Override
-            public void onError(Throwable t) {
-                essayFeedback.setText("Error: " + t.getMessage());
-            }
-
-            @Override
-            public void onCompleted() {
-                // Nothing to do here
-            }
-        };
-
-        io.grpc.stub.StreamObserver<generated.grpc.smarttutor.Essay> requestObserver
-                = asyncStub.studentEssay(responseObserver);
-
-        for (String line : lines) {
-            generated.grpc.smarttutor.Essay essayPart = generated.grpc.smarttutor.Essay.newBuilder()
-                    .setContent(line)
-                    .build();
-            requestObserver.onNext(essayPart);
-        }
-
-        requestObserver.onCompleted();
+      
     }//GEN-LAST:event_essaySendActionPerformed
 
+    private void sendEssayToServer() {
+    essayFeedback.setText("Sending...");
+    String fullText = essayToStream.getText().trim();
+    if (fullText.isEmpty()) {
+        JOptionPane.showMessageDialog(null, "Please enter your essay");
+        return;
+    } 
+    
+    StreamObserver<EssayGraded> responseObserver = new StreamObserver<EssayGraded>() {
+    @Override
+    public void onNext(EssayGraded value) {
+    essayFeedback.setText(value.getFeedback());
+    }
+    
+    @Override
+    public void onError(Throwable t) {
+    JOptionPane.showMessageDialog(null, "Error: " + t.getMessage());
+    }
+    
+    @Override
+    public void onCompleted() {
+    JOptionPane.showMessageDialog(null, "Essay submitted and graded.");
+    }
+    };
+    
+    StreamObserver<Essay> requestObserver = stub.studentEssay(responseObserver);
+    String[] paragraphs = fullText.split("\n\n");
+    for (String para : paragraphs) {
+    if (!para.trim().isEmpty()) {
+    Essay essay = Essay.newBuilder().setPartEssay(para.trim()).build();
+    requestObserver.onNext(essay);
+    }
+    }
+    requestObserver.onCompleted();
+    } 
     /**
      * @param args the command line arguments
      */

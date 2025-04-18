@@ -4,17 +4,35 @@
  */
 package distsys.smarttutor.gui;
 
+import io.grpc.stub.StreamObserver;
+import generated.grpc.smarttutor.StudentQuizServiceGrpc;
+import generated.grpc.smarttutor.QuizAnswers;
+import generated.grpc.smarttutor.QuizQuestions;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author bruol
  */
 public class StudentQuizFrame extends javax.swing.JFrame {
 
+    private ManagedChannel channel;
+    private StudentQuizServiceGrpc.StudentQuizServiceStub stub;
+
+    private StreamObserver<QuizQuestions> requestObserver;
+
     /**
      * Creates new form StudentQuizFrame
      */
     public StudentQuizFrame() {
         initComponents();
+
+        channel = ManagedChannelBuilder.forAddress("localhost", 50051)
+                .usePlaintext()
+                .build();
+        stub = StudentQuizServiceGrpc.newStub(channel);
     }
 
     /**
@@ -27,17 +45,22 @@ public class StudentQuizFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         jToggleButton1 = new javax.swing.JToggleButton();
+        jLabel5 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        startQuiz = new javax.swing.JButton();
+        notReadyQuiz = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        quizQuestions = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
-        jButton3 = new javax.swing.JButton();
+        quizAnswer = new javax.swing.JTextField();
+        sendAnswerQuiz = new javax.swing.JButton();
+        jLabel6 = new javax.swing.JLabel();
+        feedbackArea = new javax.swing.JTextField();
 
         jToggleButton1.setText("jToggleButton1");
+
+        jLabel5.setText("jLabel5");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Quiz");
@@ -48,18 +71,41 @@ public class StudentQuizFrame extends javax.swing.JFrame {
 
         jLabel2.setText("Ready to play?");
 
-        jButton1.setBackground(new java.awt.Color(185, 203, 225));
-        jButton1.setText("Yes");
-        jButton1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        startQuiz.setBackground(new java.awt.Color(185, 203, 225));
+        startQuiz.setText("Yes");
+        startQuiz.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        startQuiz.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                startQuizActionPerformed(evt);
+            }
+        });
 
-        jButton2.setBackground(new java.awt.Color(255, 231, 231));
-        jButton2.setText("No");
+        notReadyQuiz.setBackground(new java.awt.Color(255, 231, 231));
+        notReadyQuiz.setText("No");
+        notReadyQuiz.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                notReadyQuizActionPerformed(evt);
+            }
+        });
 
         jLabel3.setText("Quiz Question:");
 
         jLabel4.setText("Answer:");
 
-        jButton3.setText("Send");
+        quizAnswer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                quizAnswerActionPerformed(evt);
+            }
+        });
+
+        sendAnswerQuiz.setText("Send");
+        sendAnswerQuiz.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sendAnswerQuizActionPerformed(evt);
+            }
+        });
+
+        jLabel6.setText("Feedback:");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -72,21 +118,24 @@ public class StudentQuizFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(99, 99, 99)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButton3)
+                    .addComponent(sendAnswerQuiz)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel3)
                             .addComponent(jLabel2)
+                            .addComponent(jLabel6)
                             .addComponent(jLabel4))
                         .addGap(81, 81, 81)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButton1)
+                                .addComponent(startQuiz)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton2))
-                            .addComponent(jTextField1)
-                            .addComponent(jTextField2))))
-                .addGap(0, 158, Short.MAX_VALUE))
+                                .addComponent(notReadyQuiz)
+                                .addGap(0, 23, Short.MAX_VALUE))
+                            .addComponent(quizQuestions)
+                            .addComponent(quizAnswer)
+                            .addComponent(feedbackArea))))
+                .addGap(190, 190, 190))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -96,23 +145,99 @@ public class StudentQuizFrame extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
+                    .addComponent(startQuiz)
+                    .addComponent(notReadyQuiz))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 70, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(quizQuestions, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton3)
-                .addGap(83, 83, 83))
+                    .addComponent(quizAnswer, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
+                .addGap(18, 18, 18)
+                .addComponent(sendAnswerQuiz)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(feedbackArea, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6))
+                .addContainerGap(40, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    private boolean firstQuestionReceived = false;
+    private boolean awaitingAnswer = false;
+
+    private void startQuizActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startQuizActionPerformed
+        firstQuestionReceived  = false;
+        awaitingAnswer  = false; 
+        
+        StreamObserver<QuizAnswers> responseObserver = new StreamObserver<QuizAnswers>() {
+            
+            @Override
+            public void onNext(QuizAnswers value) {
+                if (!firstQuestionReceived) {
+                    quizQuestions.setText(value.getAnswer());
+                    feedbackArea.setText(""); 
+                    firstQuestionReceived = true;
+                    awaitingAnswer = true;
+                } else {
+                        if (!awaitingAnswer) {
+                        quizQuestions.setText(value.getAnswer());
+                        feedbackArea.setText(""); 
+                        awaitingAnswer = true;
+                        } else {
+                        feedbackArea.setText(value.getAnswerCorrect() ? "Correct!" : "Incorrect, try again.");
+                        awaitingAnswer = false;
+                        }
+                }
+
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                JOptionPane.showMessageDialog(null, "Error: " + t.getMessage());
+            }
+
+            @Override
+            public void onCompleted() {
+                JOptionPane.showMessageDialog(null, "Quiz Completed.");
+            }
+        };
+
+        requestObserver = stub.smartQuiz(responseObserver);
+
+        QuizQuestions initial = QuizQuestions.newBuilder().setQuestion("").build();
+        requestObserver.onNext(initial);
+        
+        sendAnswerQuiz.setEnabled(true);
+
+    }//GEN-LAST:event_startQuizActionPerformed
+
+    private void quizAnswerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quizAnswerActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_quizAnswerActionPerformed
+
+    private void sendAnswerQuizActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendAnswerQuizActionPerformed
+
+        String userAnswer = quizAnswer.getText().trim();
+        if (!userAnswer.isEmpty() && awaitingAnswer){
+            QuizQuestions answer = QuizQuestions.newBuilder().setQuestion(userAnswer).build();
+            requestObserver.onNext(answer);
+            quizAnswer.setText("");
+            awaitingAnswer = false;
+        } else if (userAnswer.isEmpty()){
+            JOptionPane.showMessageDialog(null, "Please enter an answer.");
+        } else if (!awaitingAnswer) {
+            JOptionPane.showMessageDialog(null, "Please wait for the next question.");
+        }
+
+    }//GEN-LAST:event_sendAnswerQuizActionPerformed
+
+    private void notReadyQuizActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_notReadyQuizActionPerformed
+        JOptionPane.showMessageDialog(null, "Ok. Let me know when you want to start.");
+    }//GEN-LAST:event_notReadyQuizActionPerformed
 
     /**
      * @param args the command line arguments
@@ -128,16 +253,24 @@ public class StudentQuizFrame extends javax.swing.JFrame {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(StudentQuizFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(StudentQuizFrame.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(StudentQuizFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(StudentQuizFrame.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(StudentQuizFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(StudentQuizFrame.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(StudentQuizFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(StudentQuizFrame.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
@@ -150,15 +283,18 @@ public class StudentQuizFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JTextField feedbackArea;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JToggleButton jToggleButton1;
+    private javax.swing.JButton notReadyQuiz;
+    private javax.swing.JTextField quizAnswer;
+    private javax.swing.JTextField quizQuestions;
+    private javax.swing.JButton sendAnswerQuiz;
+    private javax.swing.JButton startQuiz;
     // End of variables declaration//GEN-END:variables
 }
